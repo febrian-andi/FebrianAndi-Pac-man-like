@@ -6,6 +6,7 @@ public class ChaseState : BaseState
 {
     public void EnterState(Enemy enemy)
     {
+        enemy.animator.SetTrigger("ChaseState");
         // Debug.Log("Entering Chase State");
     }
 
@@ -14,8 +15,11 @@ public class ChaseState : BaseState
         if (enemy.player != null)
         {
             enemy.navMeshAgent.destination = enemy.player.transform.position;
-            
-            if (Vector3.Distance(enemy.transform.position, enemy.player.transform.position) <= enemy.chaseDistance)
+
+            if (
+                Vector3.Distance(enemy.transform.position, enemy.player.transform.position)
+                <= enemy.chaseDistance
+            )
             {
                 enemy.SwitchState(enemy.patrolState);
             }

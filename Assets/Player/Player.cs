@@ -1,6 +1,6 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -10,19 +10,51 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     private float _speed;
+
     [SerializeField]
     private Camera _camera;
+
     [SerializeField]
     private float _powerUpDuration;
 
+    [SerializeField]
+    private int _health;
+
+    [SerializeField]
+    private TMP_Text _healthText;
+
+    [SerializeField]
+    private Transform _respawnPoint;
+
     private Rigidbody _rigidbody;
     private Coroutine _powerUpCoroutine;
+    private bool _isPowerUpActive = false;
 
     // Code to hide and lock the cursor
     private void HideAndLockCursor()
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    public void Dead()
+    {
+        if (_isPowerUpActive != true)
+        {
+            Debug.Log(_health);
+            _health -= 1;
+            Debug.Log(_health);
+            UpdateUI();
+            if (_health > 0)
+            {
+                transform.position = _respawnPoint.position;
+            }
+            else
+            {
+                _health = 0;
+                Debug.Log("Game Over");
+            }
+        }
     }
 
     public void PickPowerUp()
@@ -37,12 +69,14 @@ public class Player : MonoBehaviour
 
     private IEnumerator StartPowerUp()
     {
+        _isPowerUpActive = true;
         // Debug.Log("Power up started");
         if (OnPowerUpStart != null)
         {
             OnPowerUpStart();
         }
         yield return new WaitForSeconds(_powerUpDuration);
+        _isPowerUpActive = false;
         if (OnPowerUpStop != null)
         {
             OnPowerUpStop();
@@ -53,6 +87,7 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     private void Awake()
     {
+        UpdateUI();
         _rigidbody = GetComponent<Rigidbody>();
         HideAndLockCursor();
     }
@@ -63,7 +98,7 @@ public class Player : MonoBehaviour
         if (_camera == null)
         {
             _camera = Camera.main;
-        }   
+        }
         // Horizontal = a or left (-) & d or right (+)
         float horizontal = Input.GetAxis("Horizontal");
         // Vertical = s or down (-) & w or up (+)
@@ -82,5 +117,21 @@ public class Player : MonoBehaviour
 
         // Debug.Log("Horizontal: " + horizontal);
         // Debug.Log("Vertical: " + vertical);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (_isPowerUpActive)
+        {
+            if (collision.gameObject.CompareTag("Enemy"))
+            {
+                collision.gameObject.GetComponent<Enemy>().Dead();
+            }
+        }
+    }
+
+    private void UpdateUI()
+    {
+        _healthText.text = "Health : " + _health;
     }
 }

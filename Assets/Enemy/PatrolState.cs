@@ -10,12 +10,16 @@ public class PatrolState : BaseState
     public void EnterState(Enemy enemy)
     {
         isMoving = false;
+        enemy.animator.SetTrigger("PatrolState");
         // Debug.Log("Entering Patrol State");
     }
 
     public void UpdateState(Enemy enemy)
     {
-        if (Vector3.Distance(enemy.transform.position, enemy.player.transform.position) <= enemy.chaseDistance)
+        if (
+            Vector3.Distance(enemy.transform.position, enemy.player.transform.position)
+            <= enemy.chaseDistance
+        )
         {
             enemy.SwitchState(enemy.chaseState);
         }

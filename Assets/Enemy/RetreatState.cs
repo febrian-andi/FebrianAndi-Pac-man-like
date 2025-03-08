@@ -6,6 +6,7 @@ public class RetreatState : BaseState
 {
     public void EnterState(Enemy enemy)
     {
+        enemy.animator.SetTrigger("RetreatState");
         // Debug.Log("Entering Retreat State");
     }
 
@@ -13,7 +14,8 @@ public class RetreatState : BaseState
     {
         if (enemy.player != null)
         {
-            enemy.navMeshAgent.destination = enemy.transform.position - enemy.player.transform.position;
+            enemy.navMeshAgent.destination =
+                enemy.transform.position - enemy.player.transform.position;
         }
         // Debug.Log("Updating Retreat State");
     }
