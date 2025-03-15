@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -52,7 +53,8 @@ public class Player : MonoBehaviour
             else
             {
                 _health = 0;
-                Debug.Log("Game Over");
+                // Debug.Log("Game Over");
+                SceneManager.LoadScene("LoseScreen");
             }
         }
     }
